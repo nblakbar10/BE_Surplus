@@ -8,4 +8,18 @@ use Illuminate\Database\Eloquent\Model;
 class ProductImage extends Model
 {
     use HasFactory;
+    public $table = "product_image";
+    protected $fillable = [
+        'product_id',
+        'image_id',
+    ];
+   
+    public function getUpdatedAtAttribute($value)
+    {
+        return date('d-m-Y H:i:s', strtotime($value));
+    }
+    public function getCreatedAtAttribute($value)
+    {
+        return date('d-m-Y H:i:s', strtotime($value));
+    }
 }
