@@ -5,6 +5,9 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
+use App\Models\Category;
+use Validator;
+
 class CategoryController extends Controller
 {
     /**
@@ -14,7 +17,12 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        $category = Category::all();
+        return response()->json([
+            "success" => "200",
+            "message" => "category List :",
+            "data" => $category
+        ]);
     }
 
     /**
@@ -35,7 +43,21 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $input = $request->all();
+        $validator = Validator::make($input, [
+            'name' => 'required',
+            'description' => 'required',
+            'enable' => 'required',
+        ]);
+        if($validator->fails()){
+            return $this->sendError('Validation Error.', $validator->errors());       
+        }
+        $category = Category::create($input);
+        return response()->json([
+            "success" => "200",
+            "message" => "category created successfully.",
+            "data" => $category
+        ]);
     }
 
     /**
@@ -46,7 +68,15 @@ class CategoryController extends Controller
      */
     public function show($id)
     {
-        //
+        $category = Category::find($id);
+        if (is_null($category)) {
+            return $this->sendError('category not found.');
+        }
+        return response()->json([
+            "success" => "200",
+            "message" => "category retrieved successfully.",
+            "data" => $category
+        ]);
     }
 
     /**
@@ -69,7 +99,28 @@ class CategoryController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $category = Category::find($id);
+
+        $input = $request->all();
+        $validator = Validator::make($input, [
+            'name' => 'required',
+            'description' => 'required',
+            'enable' => 'required',
+        ]);
+
+        if($validator->fails()){
+            return $this->sendError('Validation Error.', $validator->errors());       
+        }
+
+        $category->name = $input['name'];
+        $category->description = $input['description'];
+        $category->save();
+
+        return response()->json([
+            "success" => "200",
+            "message" => "category updated successfully.",
+            "data" => $category
+        ]);
     }
 
     /**
@@ -80,6 +131,15 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $category = Category::findOrFail($id);
+        if($category)
+           $category->delete(); 
+        else
+            return response()->json(error);
+        return response()->json([
+            "success" => "200",
+            "message" => "category deleted successfully.",
+            "data" => $category
+        ]);
     }
 }

@@ -19,8 +19,8 @@ class ProductController extends Controller
     {
         $product = Product::all();
         return response()->json([
-            "success" => true,
-            "message" => "Product List",
+            "success" => "200",
+            "message" => "Product List :",
             "data" => $product
         ]);
     }
@@ -46,14 +46,15 @@ class ProductController extends Controller
         $input = $request->all();
         $validator = Validator::make($input, [
             'name' => 'required',
-            'detail' => 'required'
+            'description' => 'required',
+            'enable' => 'required',
         ]);
         if($validator->fails()){
             return $this->sendError('Validation Error.', $validator->errors());       
         }
         $product = Product::create($input);
         return response()->json([
-            "success" => true,
+            "success" => "200",
             "message" => "Product created successfully.",
             "data" => $product
         ]);
@@ -72,7 +73,7 @@ class ProductController extends Controller
             return $this->sendError('Product not found.');
         }
         return response()->json([
-            "success" => true,
+            "success" => "200",
             "message" => "Product retrieved successfully.",
             "data" => $product
         ]);
@@ -98,10 +99,13 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $product = Product::find($id);
+
         $input = $request->all();
         $validator = Validator::make($input, [
             'name' => 'required',
-            'detail' => 'required'
+            'description' => 'required',
+            'enable' => 'required',
         ]);
 
         if($validator->fails()){
@@ -109,11 +113,11 @@ class ProductController extends Controller
         }
 
         $product->name = $input['name'];
-        $product->detail = $input['detail'];
+        $product->description = $input['description'];
         $product->save();
 
         return response()->json([
-            "success" => true,
+            "success" => "200",
             "message" => "Product updated successfully.",
             "data" => $product
         ]);
@@ -127,9 +131,13 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-        $product->delete();
+        $product = Product::findOrFail($id);
+        if($product)
+           $product->delete(); 
+        else
+            return response()->json(error);
         return response()->json([
-            "success" => true,
+            "success" => "200",
             "message" => "Product deleted successfully.",
             "data" => $product
         ]);
