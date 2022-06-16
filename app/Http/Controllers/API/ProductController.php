@@ -101,20 +101,12 @@ class ProductController extends Controller
     {
         $product = Product::find($id);
 
-        $input = $request->all();
-        $validator = Validator::make($input, [
-            'name' => 'required',
-            'description' => 'required',
-            'enable' => 'required',
-        ]);
+        $product->update($request->all());
 
-        if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());       
-        }
+        // $input = $request->all();
 
-        $product->name = $input['name'];
-        $product->description = $input['description'];
-        $product->save();
+        // $product->fill($input)->update();
+
 
         return response()->json([
             "success" => "200",

@@ -101,20 +101,7 @@ class CategoryController extends Controller
     {
         $category = Category::find($id);
 
-        $input = $request->all();
-        $validator = Validator::make($input, [
-            'name' => 'required',
-            'description' => 'required',
-            'enable' => 'required',
-        ]);
-
-        if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());       
-        }
-
-        $category->name = $input['name'];
-        $category->description = $input['description'];
-        $category->save();
+        $category->update($request->all());
 
         return response()->json([
             "success" => "200",
