@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Models\Image;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 
 class ImageController extends Controller
 {
@@ -46,20 +46,34 @@ class ImageController extends Controller
         $input = $request->all();
         $validator = Validator::make($input, [
             'name' => 'required',
-            'image' => 'required|mimes:jpeg,jpg,png',
+            'file' => 'required|mimes:jpeg,jpg,png',
             'enable' => 'required',
         ]);
 
 
         if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());       
+            return response()->json($validator->messages(), 400);          
         }
+        if($request->hasfile('file'))
+        {
+            $host = $request->getSchemeAndHttpHost();
+            $file_picture = $request->file;
+            $fileName_picture = $host.'/storage/image/'.time().'_'.$file_picture->getClientOriginalName();
+            $file_picture->move(public_path('storage/image'), $fileName_picture);
+            $data = $fileName_picture;
+        }
+        
 
-        $file_picture = $request->image;
-        $fileName_picture = $host.'/storage/image/'.time().'_'.$file_picture->getClientOriginalName();
-        $file_picture->move(public_path('storage/image'), $fileName_picture);
+        // $image = Image::create($input);
 
-        $image = Image::create($input);
+
+        $image = new Image();
+        $image->name = $request->name;
+        $image->file= $fileName_picture; 
+        $image->enable = $request->enable;
+        $image->save();
+
+
 
         return response()->json([
             "success" => "200",
@@ -114,17 +128,17 @@ class ImageController extends Controller
         $input = $request->all();
         $validator = Validator::make($input, [
             'name' => 'required',
-            'description' => 'required',
+            'file' => 'required|mimes:jpeg,jpg,png',
             'enable' => 'required',
         ]);
         if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());       
+            return response()->json($validator->messages(), 400);    
         }
 
-        if ($request->image != NULL) {
+        if ($request->file != NULL) {
             $host = $request->getSchemeAndHttpHost();
 
-            $file_picture = $request->image;
+            $file_picture = $request->file;
             $fileName_picture = $host.'/storage/image/'.time().'_'.$file_picture->getClientOriginalName();
             $file_picture->move(public_path('storage/image'), $fileName_picture);
 

@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Models\Product;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
@@ -50,7 +50,7 @@ class ProductController extends Controller
             'enable' => 'required',
         ]);
         if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());       
+            return response()->json($validator->messages(), 400);
         }
         $product = Product::create($input);
         return response()->json([
@@ -102,11 +102,6 @@ class ProductController extends Controller
         $product = Product::find($id);
 
         $product->update($request->all());
-
-        // $input = $request->all();
-
-        // $product->fill($input)->update();
-
 
         return response()->json([
             "success" => "200",

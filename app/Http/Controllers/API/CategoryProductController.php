@@ -14,7 +14,12 @@ class CategoryProductController extends Controller
      */
     public function index()
     {
-        //
+        $categoryproduct = CategoryProduct::all();
+        return response()->json([
+            "success" => "200",
+            "message" => "categoryproduct List :",
+            "data" => $categoryproduct
+        ]);
     }
 
     /**
@@ -35,7 +40,21 @@ class CategoryProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $input = $request->all();
+        $validator = Validator::make($input, [
+            'product_id' => 'required',
+            'category_id' => 'required',
+            'enable' => 'required',
+        ]);
+        if($validator->fails()){
+            return response()->json($validator->messages(), 400);        
+        }
+        $categoryproduct = CategoryProduct::create($input);
+        return response()->json([
+            "success" => "200",
+            "message" => "categoryproduct created successfully.",
+            "data" => $categoryproduct
+        ]);
     }
 
     /**
@@ -46,7 +65,15 @@ class CategoryProductController extends Controller
      */
     public function show($id)
     {
-        //
+        $categoryproduct = CategoryProduct::find($id);
+        if (is_null($categoryproduct)) {
+            return $this->sendError('categoryproduct not found.');
+        }
+        return response()->json([
+            "success" => "200",
+            "message" => "categoryproduct retrieved successfully.",
+            "data" => $categoryproduct
+        ]);
     }
 
     /**
@@ -69,7 +96,28 @@ class CategoryProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $categoryproduct = CategoryProduct::find($id);
+
+        $input = $request->all();
+        $validator = Validator::make($input, [
+            'name' => 'required',
+            'description' => 'required',
+            'enable' => 'required',
+        ]);
+
+        if($validator->fails()){
+            return $this->sendError('Validation Error.', $validator->errors());       
+        }
+
+        $categoryproduct->name = $input['name'];
+        $categoryproduct->description = $input['description'];
+        $categoryproduct->save();
+
+        return response()->json([
+            "success" => "200",
+            "message" => "categoryproduct updated successfully.",
+            "data" => $categoryproduct
+        ]);
     }
 
     /**
@@ -80,6 +128,17 @@ class CategoryProductController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $categoryproduct = CategoryProduct::findOrFail($id);
+        if($categoryproduct)
+           $categoryproduct->delete(); 
+        else
+            return response()->json(error);
+        return response()->json([
+            "success" => "200",
+            "message" => "categoryproduct deleted successfully.",
+            "data" => $categoryproduct
+        ]);
     }
 }
+
+

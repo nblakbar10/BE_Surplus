@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Models\Category;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 
 class CategoryController extends Controller
 {
@@ -46,11 +46,10 @@ class CategoryController extends Controller
         $input = $request->all();
         $validator = Validator::make($input, [
             'name' => 'required',
-            'description' => 'required',
             'enable' => 'required',
         ]);
         if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());       
+            return response()->json($validator->messages(), 400);       
         }
         $category = Category::create($input);
         return response()->json([
