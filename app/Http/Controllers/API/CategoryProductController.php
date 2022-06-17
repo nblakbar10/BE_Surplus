@@ -5,9 +5,6 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-use App\Models\Product;
-use App\Models\Category;
-
 use App\Models\CategoryProduct;
 use Illuminate\Support\Facades\Validator;
 
@@ -55,6 +52,7 @@ class CategoryProductController extends Controller
         if($validator->fails()){
             return response()->json($validator->messages(), 400);        
         }
+        
         $categoryproduct = CategoryProduct::create($input);
         return response()->json([
             "success" => "200",
@@ -69,17 +67,52 @@ class CategoryProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function showbyProductID($product_id)
     {
-        $categoryproduct = CategoryProduct::find($id);
-        if (is_null($categoryproduct)) {
-            return $this->sendError('categoryproduct not found.');
+        $categoryproduct = CategoryProduct::where('product_id', $product_id)->get();
+
+        if (count($categoryproduct)==0) {
+            $data = [
+                'message' => 'productid not found'
+            ];
+
+            return response()->json($data, 200);
         }
-        return response()->json([
-            "success" => "200",
-            "message" => "categoryproduct retrieved successfully.",
-            "data" => $categoryproduct
-        ]);
+
+        $array = [];
+        foreach ($categoryproduct as $key => $value) {
+            array_push($array, $value);
+        }
+        $data = [
+            'message' => 'Success',
+            'data' => $array
+        ];     
+
+        return response()->json($data, 200);
+    }
+
+    public function showbyCategoryID($category_id)
+    {
+        $categoryproduct = CategoryProduct::where('category_id', $category_id)->get();
+
+        if (count($categoryproduct)==0) {
+            $data = [
+                'message' => 'categoryproduct not found'
+            ];
+
+            return response()->json($data, 200);
+        }
+
+        $array = [];
+        foreach ($categoryproduct as $key => $value) {
+            array_push($array, $value);
+        }
+        $data = [
+            'message' => 'Success',
+            'data' => $array
+        ];     
+
+        return response()->json($data, 200);
     }
 
     /**
@@ -100,29 +133,31 @@ class CategoryProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function updatebyCategoryID(Request $request, $category_id)
     {
-        $categoryproduct = CategoryProduct::find($id);
+        $categoryproduct = CategoryProduct::where('category_id', $category_id);
 
-        $input = $request->all();
-        $validator = Validator::make($input, [
-            'name' => 'required',
-            'description' => 'required',
-            'enable' => 'required',
+        $categoryproduct->update([
+            'product_id' => $request->input('product_id')
         ]);
-
-        if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());       
-        }
-
-        $categoryproduct->name = $input['name'];
-        $categoryproduct->description = $input['description'];
-        $categoryproduct->save();
 
         return response()->json([
             "success" => "200",
-            "message" => "categoryproduct updated successfully.",
-            "data" => $categoryproduct
+            "message" => "categoryproduct updated successfully."
+        ]);
+    }
+
+    public function updatebyProductID(Request $request, $product_id)
+    {
+
+        $categoryproduct = CategoryProduct::where('product_id', $product_id);
+        $categoryproduct->update([
+            'category_id' => $request->input('category_id')
+        ]);
+
+        return response()->json([
+            "success" => "200",
+            "message" => "categoryproduct updated successfully."
         ]);
     }
 
@@ -132,18 +167,28 @@ class CategoryProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroybyCategoryID($category_id)
     {
-        $categoryproduct = CategoryProduct::findOrFail($id);
-        if($categoryproduct)
-           $categoryproduct->delete(); 
-        else
-            return response()->json(error);
-        return response()->json([
-            "success" => "200",
-            "message" => "categoryproduct deleted successfully.",
-            "data" => $categoryproduct
-        ]);
+        $count = CategoryProduct::where('category_id', $category_id)->delete();
+        if($count > 0 ){
+
+            return response()->json(['message'=>'Successfully Deleted']);
+        }
+        else{
+            return response()->json(['message'=>'Delete Failed']);
+        }
+    }
+
+    public function destroybyProductID($product_id)
+    {
+        $count = CategoryProduct::where('product_id', $product_id)->delete();
+        if($count > 0 ){
+
+            return response()->json(['message'=>'Successfully Deleted']);
+        }
+        else{
+            return response()->json(['message'=>'Delete Failed']);
+        }
     }
 }
 

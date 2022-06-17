@@ -49,10 +49,13 @@ Route::put('image/{id}', [ImageController::class, 'update']);
 Route::delete('image/{id}', [ImageController::class, 'destroy']);
 
 Route::get('category_product', [CategoryProductController::class, 'index']);
-Route::get('category_product/{id}', [CategoryProductController::class, 'show']);
+Route::get('category_product_byProID/{product_id}', [CategoryProductController::class, 'showbyProductID']);
+Route::get('category_product_byCatID/{category_id}', [CategoryProductController::class, 'showbyCategoryID']);
 Route::post('category_product', [CategoryProductController::class, 'store']);
-Route::put('category_product/{id}', [CategoryProductController::class, 'update']);
-Route::delete('category_product/{id}', [CategoryProductController::class, 'destroy']);
+Route::post('category_product_byProID/{product_id}', [CategoryProductController::class, 'updatebyProductID']);
+Route::post('category_product_byCatID/{category_id}', [CategoryProductController::class, 'updatebyCategoryID']);
+Route::delete('delete_category_product_byCatID/{category_id}', [CategoryProductController::class, 'destroybyCategoryID']);
+Route::delete('delete_category_product_byProID/{product_id}', [CategoryProductController::class, 'destroybyProductID']);
 
 Route::get('product_image', [ProductImageController::class, 'index']);
 Route::get('product_image/{id}', [ProductImageController::class, 'show']);
