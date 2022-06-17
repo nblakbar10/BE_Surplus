@@ -18,7 +18,12 @@ class ProductImageController extends Controller
      */
     public function index()
     {
-        //
+        $productimage = ProductImage::all();
+        return response()->json([
+            "success" => "200",
+            "message" => "ProductImage List :",
+            "data" => $productimage
+        ]);
     }
 
     /**
@@ -39,7 +44,22 @@ class ProductImageController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $input = $request->all();
+        $validator = Validator::make($input, [
+            'product_id' => 'required|integer',
+            'image_id' => 'required|integer',
+            // 'enable' => 'required',
+        ]);
+        if($validator->fails()){
+            return response()->json($validator->messages(), 400);        
+        }
+        
+        $productimage = ProductImage::create($input);
+        return response()->json([
+            "success" => "200",
+            "message" => "productimage created successfully.",
+            "data" => $productimage
+        ]);
     }
 
     /**
@@ -48,9 +68,52 @@ class ProductImageController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function showbyProductID($product_id)
     {
-        //
+        $productimage = ProductImage::where('product_id', $product_id)->get();
+
+        if (count($productimage)==0) {
+            $data = [
+                'message' => 'productid not found'
+            ];
+
+            return response()->json($data, 200);
+        }
+
+        $array = [];
+        foreach ($productimage as $key => $value) {
+            array_push($array, $value);
+        }
+        $data = [
+            'message' => 'Success',
+            'data' => $array
+        ];     
+
+        return response()->json($data, 200);
+    }
+
+    public function showbyImageID($image_id)
+    {
+        $productimage = ProductImage::where('image_id', $image_id)->get();
+
+        if (count($productimage)==0) {
+            $data = [
+                'message' => 'productimage not found'
+            ];
+
+            return response()->json($data, 200);
+        }
+
+        $array = [];
+        foreach ($productimage as $key => $value) {
+            array_push($array, $value);
+        }
+        $data = [
+            'message' => 'Success',
+            'data' => $array
+        ];     
+
+        return response()->json($data, 200);
     }
 
     /**
@@ -71,9 +134,32 @@ class ProductImageController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function updatebyImageID(Request $request, $image_id)
     {
-        //
+        $productimage = ProductImage::where('image_id', $image_id);
+
+        $productimage->update([
+            'product_id' => $request->input('product_id')
+        ]);
+
+        return response()->json([
+            "success" => "200",
+            "message" => "imageproduct updated successfully."
+        ]);
+    }
+
+    public function updatebyProductID(Request $request, $product_id)
+    {
+
+        $productimage = ProductImage::where('product_id', $product_id);
+        $productimage->update([
+            'image_id' => $request->input('image_id')
+        ]);
+
+        return response()->json([
+            "success" => "200",
+            "message" => "productimage updated successfully."
+        ]);
     }
 
     /**
@@ -82,8 +168,27 @@ class ProductImageController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroybyImageID($image_id)
     {
-        //
+        $count = ProductImage::where('image_id', $image_id)->delete();
+        if($count > 0 ){
+
+            return response()->json(['message'=>'Successfully Deleted']);
+        }
+        else{
+            return response()->json(['message'=>'Delete Failed']);
+        }
+    }
+
+    public function destroybyProductID($product_id)
+    {
+        $count = ProductImage::where('product_id', $product_id)->delete();
+        if($count > 0 ){
+
+            return response()->json(['message'=>'Successfully Deleted']);
+        }
+        else{
+            return response()->json(['message'=>'Delete Failed']);
+        }
     }
 }

@@ -13,6 +13,10 @@ class ProductImage extends Model
         'product_id',
         'image_id',
     ];
-   
+
+    protected $hidden = [
+        'id'
+    ];
+
     public $timestamps = false;
 }
