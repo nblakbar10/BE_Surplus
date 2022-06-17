@@ -5,6 +5,12 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
+use App\Models\Product;
+use App\Models\Category;
+
+use App\Models\CategoryProduct;
+use Illuminate\Support\Facades\Validator;
+
 class CategoryProductController extends Controller
 {
     /**
@@ -42,9 +48,9 @@ class CategoryProductController extends Controller
     {
         $input = $request->all();
         $validator = Validator::make($input, [
-            'product_id' => 'required',
-            'category_id' => 'required',
-            'enable' => 'required',
+            'product_id' => 'required|integer',
+            'category_id' => 'required|integer',
+            // 'enable' => 'required',
         ]);
         if($validator->fails()){
             return response()->json($validator->messages(), 400);        

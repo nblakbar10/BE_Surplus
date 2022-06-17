@@ -17,20 +17,20 @@ class CategoryProductTableSeeder extends Seeder
             [   
                 'product_id' => 1,
                 'category_id' => 1,
-                'created_at' => new \DateTime,
-                'updated_at' => null,
+                // 'created_at' => new \DateTime,
+                // 'updated_at' => null,
             ], 
             [   
                 'product_id' => 2,
                 'category_id' => 1,
-                'created_at' => new \DateTime,
-                'updated_at' => null,
+                // 'created_at' => new \DateTime,
+                // 'updated_at' => null,
             ], 
             [   
                 'product_id' => 3,
                 'category_id' => 2,
-                'created_at' => new \DateTime,
-                'updated_at' => null,
+                // 'created_at' => new \DateTime,
+                // 'updated_at' => null,
             ], 
 
         ];
